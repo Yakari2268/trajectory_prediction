@@ -7,6 +7,4 @@ venv/
 env/
 
 # Ignore model files or large datasets
-*.pth
-*.pt
 train_segments.npz
