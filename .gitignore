@@ -8,3 +8,4 @@ env/
 
 # Ignore model files or large datasets
 train_segments.npz
+val_segments.npz
