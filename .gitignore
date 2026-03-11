@@ -1,11 +1,1 @@
-# Ignore Python cache files
-__pycache__/
-*.py[cod]
-
-# Ignore virtual environment folders
-venv/
-env/
-
-# Ignore model files or large datasets
-train_segments.npz
-val_segments.npz
+/data

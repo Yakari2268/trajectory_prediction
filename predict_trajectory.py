@@ -117,11 +117,11 @@ def predict_from_coordinates(drone_coords, model_path, stats_path, output_seq_le
 
 # --- 4. Example Use ---
 if __name__ == '__main__':
-     
-     drone_history = np.load('ros_history.npy')
+    # Dummy input: replace with your real drone coordinates (Nx3 array)
+    dummy_coords = np.cumsum(np.random.randn(20, 3) * 0.01, axis=0)  # replace with real drone data
 
     predicted_traj = predict_from_coordinates(
-        drone_coords=drone_history,
+        drone_coords=dummy_coords,
         model_path='best_model.pth',
         stats_path='vel_stats.npz',
         output_seq_len=20,
