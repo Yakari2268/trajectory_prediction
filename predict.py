@@ -91,10 +91,10 @@ def integrate_velocity(start_pos, velocities, dt=0.1):
 if __name__ == '__main__':
     # --- Configuration ---
     #!! IMPORTANT: Update these paths to your files!!
-    MODEL_PATH = 'best_model_1.pth'
-    STATS_PATH = 'vel_stats_1.npz'
-    VAL_SEGMENTS_PATH = 'val_segments.npz'
-    SAMPLE_INDEX = 126175 # Which sample from the validation file to test
+    MODEL_PATH = 'best_model_6.pth'
+    STATS_PATH = 'vel_stats_4.npz'
+    VAL_SEGMENTS_PATH = 'val_segments_6.npz'
+    SAMPLE_INDEX = 273 # Which sample from the validation file to test
 
     # Match these settings to the model you are loading
     USE_VELOCITY_PREDICTION = True
@@ -102,8 +102,8 @@ if __name__ == '__main__':
 
     # Model parameters (must match the saved model)
     INPUT_DIM = 3
-    HIDDEN_DIM = 64
-    NUM_LAYERS = 2
+    HIDDEN_DIM = 128
+    NUM_LAYERS = 3
     OUTPUT_DIM = 3
     DROPOUT_PROB = 0.5
     DT = 0.1
@@ -135,6 +135,8 @@ if __name__ == '__main__':
     # 1. Select the specific sample using SAMPLE_INDEX from the last axis.
     # This results in a shape of (features, seq_len), e.g., (3, 20).
     input_sample_raw = val_data['input_segments'][:, :, SAMPLE_INDEX]
+    print(input_sample_raw.ndim) 
+    print(input_sample_raw[:, :4])  # First 2 rows, first 3 columns
     true_output_sample_raw = val_data['output_segments'][:, :, SAMPLE_INDEX]
 
     # 2. Transpose to get the desired (seq_len, features) shape, e.g., (20, 3).
@@ -183,10 +185,10 @@ if __name__ == '__main__':
     # Plot the historical path
     ax.plot(input_history_pos[:, 0], input_history_pos[:, 1], input_history_pos[:, 2], 'b-', label='Input History')
     ax.scatter(input_history_pos[-1, 0], input_history_pos[-1, 1], input_history_pos[-1, 2], c='b', marker='o', s=60, label='Last Known Point')
-    
+
     # Plot the ground truth future path
     ax.plot(true_future_pos[:, 0], true_future_pos[:, 1], true_future_pos[:, 2], 'g--', label='True Future')
-    
+
     # Plot the predicted future path
     ax.plot(predicted_trajectory_pos[:, 0], predicted_trajectory_pos[:, 1], predicted_trajectory_pos[:, 2], 'r-o', markersize=4, label='Predicted Trajectory')
 
@@ -196,12 +198,23 @@ if __name__ == '__main__':
     ax.set_title(f'Trajectory Prediction for Validation Sample #{SAMPLE_INDEX}')
     ax.legend()
     ax.grid(True)
-    # Improve axis scaling for better visualization
+
+    # Ensure equal scaling for all axes
     all_points = np.vstack([input_history_pos, true_future_pos, predicted_trajectory_pos])
     x_min, y_min, z_min = all_points.min(axis=0)
     x_max, y_max, z_max = all_points.max(axis=0)
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(y_min, y_max)
-    ax.set_zlim(z_min, z_max)
-    
+
+    # Find the middle and the maximum range
+    x_center = (x_min + x_max) / 2
+    y_center = (y_min + y_max) / 2
+    z_center = (z_min + z_max) / 2
+
+    max_range = max(x_max - x_min, y_max - y_min, z_max - z_min) / 2
+
+    # Set limits with equal range
+    ax.set_xlim(x_center - max_range, x_center + max_range)
+    ax.set_ylim(y_center - max_range, y_center + max_range)
+    ax.set_zlim(z_center - max_range, z_center + max_range)
+
     plt.show()
+
